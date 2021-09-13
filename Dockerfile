@@ -13,4 +13,5 @@ FROM alpine
 COPY --from=build /app/be-auth ./
 
 ENV PORT 80
+ENV GIN_MODE release
 CMD /be-auth
