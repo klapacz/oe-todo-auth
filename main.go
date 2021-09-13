@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/klapacz/oe-todo-be-auth/models"
+	"github.com/klapacz/oe-todo-auth/models"
 )
 
 func main() {

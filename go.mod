@@ -1,4 +1,4 @@
-module github.com/klapacz/oe-todo-be-auth
+module github.com/klapacz/oe-todo-auth
 
 go 1.17
 
