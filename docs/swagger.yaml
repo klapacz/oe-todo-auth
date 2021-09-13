@@ -1,22 +1,5 @@
 consumes:
 - application/json
-definitions:
-  Credentials:
-    description: |-
-      func CheckPasswordHash(password, hash string) bool {
-      err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-      return err == nil
-      }
-    properties:
-      password:
-        type: string
-        x-go-name: Password
-      username:
-        example: user@example.com
-        type: string
-        x-go-name: Username
-    type: object
-    x-go-package: github.com/klapacz/oe-todo-auth/controllers
 info:
   contact:
     email: lapacz.kornel@gmail.com
@@ -31,13 +14,21 @@ info:
 paths:
   /access-token:
     post:
+      consumes:
+      - application/x-www-form-urlencoded
       operationId: login
       parameters:
-      - in: body
-        name: Body
+      - example: user@example.com
+        in: formData
+        name: username
         required: true
-        schema:
-          $ref: '#/definitions/Credentials'
+        type: string
+        x-go-name: Username
+      - in: formData
+        name: password
+        required: true
+        type: string
+        x-go-name: Password
       responses:
         "200":
           $ref: '#/responses/loginResponseOK'
@@ -72,4 +63,9 @@ responses:
 schemes:
 - http
 - https
+securityDefinitions:
+  oauth2:
+    flow: password
+    tokenUrl: /access-token
+    type: oauth2
 swagger: "2.0"

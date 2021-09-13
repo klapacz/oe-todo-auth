@@ -6,6 +6,11 @@
 //     Version: 0.1.0
 //     License: MIT http://opensource.org/licenses/MIT
 //     Contact: Korneliusz Łapacz<lapacz.kornel@gmail.com> http://klapacz.dev
+//     SecurityDefinitions:
+//       oauth2:
+//           type: oauth2
+//           tokenUrl: /access-token
+//           flow: password
 //
 //     Consumes:
 //     - application/json

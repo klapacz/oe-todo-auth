@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/klapacz/oe-todo-auth/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // func HashPassword(password string) string {
@@ -17,17 +15,16 @@ import (
 // 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 // 	return err == nil
 // }
-type Credentials struct {
-	// example: user@example.com
-	Username string `form:"username" json:"username" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
 
 // swagger:parameters credentails login
 type loginRequest struct {
-	// in: body
+	// example: user@example.com
+	// in: formData
 	// required: true
-	Body Credentials
+	Username string `form:"username" json:"username" binding:"required"`
+	// in: formData
+	// required: true
+	Password string `form:"password" json:"password" binding:"required"`
 }
 
 // swagger:response loginResponseOK
@@ -54,38 +51,39 @@ const authErrMsg = "Username or password is incorrect"
 //       200: loginResponseOK
 //       422: GenericError
 //       401: GenericError
+//     Consumes:
+//       - application/x-www-form-urlencoded
 //
 func Login(c *gin.Context) {
-	var user models.User
-	var credentails Credentials
+	// var user models.User
 
-	authErr := func() {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": authErrMsg,
-		})
-	}
+	// authErr := func() {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{
+	// 		"error": authErrMsg,
+	// 	})
+	// }
 
-	if err := c.ShouldBindJSON(&credentails); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error": err,
-		})
-		return
-	}
+	// if err := c.ShouldBindJSON(&credentails); err != nil {
+	// 	c.JSON(http.StatusUnprocessableEntity, gin.H{
+	// 		"error": err,
+	// 	})
+	// 	return
+	// }
 
-	models.DB.First(&user, "email = ?", credentails.Username)
+	// models.DB.First(&user, "email = ?", credentails.Username)
 
-	// TODO: find correct method of checking if object was fetched
-	if user.Email == "" {
-		authErr()
-		return
-	}
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentails.Password))
-	if err != nil {
-		authErr()
-		return
-	}
+	// // TODO: find correct method of checking if object was fetched
+	// if user.Email == "" {
+	// 	authErr()
+	// 	return
+	// }
+	// err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentails.Password))
+	// if err != nil {
+	// 	authErr()
+	// 	return
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
-		"accessToken": "hello",
+		"access_token": "hello",
 	})
 }
