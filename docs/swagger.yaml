@@ -1,0 +1,23 @@
+consumes:
+- application/json
+info:
+  contact:
+    email: lapacz.kornel@gmail.com
+    name: Korneliusz Łapacz
+    url: http://klapacz.dev
+  description: Manages authorization.
+  license:
+    name: MIT
+    url: http://opensource.org/licenses/MIT
+  title: oe-todo auth API
+  version: 0.1.0
+paths:
+  /ping:
+    get:
+      operationId: Ping
+produces:
+- application/json
+schemes:
+- http
+- https
+swagger: "2.0"
