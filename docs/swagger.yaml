@@ -42,9 +42,9 @@ paths:
         "200":
           $ref: '#/responses/loginResponseOK'
         "401":
-          $ref: '#/responses/loginResponseAuthErr'
+          $ref: '#/responses/GenericError'
         "422":
-          $ref: '#/responses/loginResponseValidationErr'
+          $ref: '#/responses/GenericError'
       tags:
       - auth
   /ping:
@@ -53,7 +53,7 @@ paths:
 produces:
 - application/json
 responses:
-  loginResponseAuthErr:
+  GenericError:
     description: ""
     schema:
       properties:
@@ -68,14 +68,6 @@ responses:
         accessToken:
           type: string
           x-go-name: AccessToken
-      type: object
-  loginResponseValidationErr:
-    description: ""
-    schema:
-      properties:
-        error:
-          type: string
-          x-go-name: Error
       type: object
 schemes:
 - http

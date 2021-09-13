@@ -38,16 +38,8 @@ type loginResponseOK struct {
 	}
 }
 
-// swagger:response loginResponseValidationErr
-type loginResponseValidationErr struct {
-	// in: body
-	Body struct {
-		Error string `json:"error"`
-	}
-}
-
-// swagger:response loginResponseAuthErr
-type loginResponseAuthErr struct {
+// swagger:response GenericError
+type genericError struct {
 	// in: body
 	Body struct {
 		Error string `json:"error"`
@@ -60,8 +52,8 @@ const authErrMsg = "Login authorization failed"
 //
 //     Responses:
 //       200: loginResponseOK
-//       422: loginResponseValidationErr
-//       401: loginResponseAuthErr
+//       422: GenericError
+//       401: GenericError
 //
 func Login(c *gin.Context) {
 	var user models.User
