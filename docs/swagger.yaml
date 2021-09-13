@@ -1,5 +1,22 @@
 consumes:
 - application/json
+definitions:
+  Credentials:
+    description: |-
+      func CheckPasswordHash(password, hash string) bool {
+      err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+      return err == nil
+      }
+    properties:
+      password:
+        type: string
+        x-go-name: Password
+      username:
+        example: user@example.com
+        type: string
+        x-go-name: Username
+    type: object
+    x-go-package: github.com/klapacz/oe-todo-auth/controllers
 info:
   contact:
     email: lapacz.kornel@gmail.com
@@ -12,11 +29,54 @@ info:
   title: oe-todo auth API
   version: 0.1.0
 paths:
+  /access-token:
+    post:
+      operationId: login
+      parameters:
+      - in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/Credentials'
+      responses:
+        "200":
+          $ref: '#/responses/loginResponseOK'
+        "401":
+          $ref: '#/responses/loginResponseAuthErr'
+        "422":
+          $ref: '#/responses/loginResponseValidationErr'
+      tags:
+      - auth
   /ping:
     get:
       operationId: Ping
 produces:
 - application/json
+responses:
+  loginResponseAuthErr:
+    description: ""
+    schema:
+      properties:
+        error:
+          type: string
+          x-go-name: Error
+      type: object
+  loginResponseOK:
+    description: ""
+    schema:
+      properties:
+        accessToken:
+          type: string
+          x-go-name: AccessToken
+      type: object
+  loginResponseValidationErr:
+    description: ""
+    schema:
+      properties:
+        error:
+          type: string
+          x-go-name: Error
+      type: object
 schemes:
 - http
 - https

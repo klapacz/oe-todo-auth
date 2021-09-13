@@ -29,5 +29,6 @@ func main() {
 	r.Static("/docs", "./docs")
 
 	r.GET("/ping", controllers.Ping)
+	r.POST("/access-token", controllers.Login)
 	r.Run()
 }

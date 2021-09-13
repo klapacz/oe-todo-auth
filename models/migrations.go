@@ -26,9 +26,9 @@ var migrations = []*gormigrate.Migration{
 		Migrate: func(tx *gorm.DB) error {
 			type User struct {
 				gorm.Model
-				ID    string `gorm:"type:uuid;default:uuid_generate_v4()"`
-				Name  string
-				Email string
+				ID       string `gorm:"type:uuid;default:uuid_generate_v4()"`
+				Password string
+				Email    string
 			}
 			return tx.AutoMigrate(&User{})
 		},
