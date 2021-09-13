@@ -46,7 +46,7 @@ type genericError struct {
 	}
 }
 
-const authErrMsg = "Login authorization failed"
+const authErrMsg = "Username or password is incorrect"
 
 // swagger:route POST /access-token auth login
 //
