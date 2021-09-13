@@ -12,11 +12,11 @@ var migrations = []*gormigrate.Migration{
 	{
 		ID: "202109130454",
 		Migrate: func(tx *gorm.DB) error {
-			tx.Exec("CREATE EXTENSION uuid-ossp;")
+			tx.Exec("CREATE EXTENSION \"uuid-ossp\";")
 			return nil
 		},
 		Rollback: func(tx *gorm.DB) error {
-			tx.Exec("DROP EXTENSION uuid-ossp;")
+			tx.Exec("DROP EXTENSION \"uuid-ossp\";")
 			return nil
 		},
 	},
