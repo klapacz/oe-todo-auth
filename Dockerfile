@@ -4,8 +4,8 @@ WORKDIR /app
 COPY go.* ./
 RUN go mod download
 
-COPY *.go ./
-RUN go build -o be-auth
+COPY . .
+RUN go build  -o be-auth *.go
 
 
 FROM alpine
