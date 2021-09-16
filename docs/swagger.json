@@ -1,0 +1,74 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Manage authorization",
+        "title": "oe-todo auth API",
+        "contact": {
+            "name": "Korneliusz Łapacz",
+            "url": "http://klapacz.dev",
+            "email": "lapacz.kornel@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "http://opensource.org/licenses/MIT"
+        },
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/v1/auth/access-token": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get access token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.loginResponseOK"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controllers.loginResponseOK": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "OAuth2Password": {
+            "type": "oauth2",
+            "flow": "password",
+            "tokenUrl": "/v1/auth/access-token"
+        }
+    }
+}

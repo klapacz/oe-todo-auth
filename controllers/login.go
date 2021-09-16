@@ -1,9 +1,14 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
+	"github.com/klapacz/oe-todo-auth/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // func HashPassword(password string) string {
@@ -11,79 +16,64 @@ import (
 // 	return string(bytes)
 // }
 
-// func CheckPasswordHash(password, hash string) bool {
-// 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-// 	return err == nil
-// }
-
-// swagger:parameters credentails login
-type loginRequest struct {
-	// example: user@example.com
-	// in: formData
-	// required: true
-	Username string `form:"username" json:"username" binding:"required"`
-	// in: formData
-	// required: true
-	Password string `form:"password" json:"password" binding:"required"`
-}
-
-// swagger:response loginResponseOK
 type loginResponseOK struct {
-	// in: body
-	Body struct {
-		AccessToken string `json:"accessToken"`
-	}
-}
-
-// swagger:response GenericError
-type genericError struct {
-	// in: body
-	Body struct {
-		Error string `json:"error"`
-	}
+	AccessToken string `json:"access_token"`
 }
 
 const authErrMsg = "Username or password is incorrect"
 
-// swagger:route POST /access-token auth login
-//
-//     Responses:
-//       200: loginResponseOK
-//       422: GenericError
-//       401: GenericError
-//     Consumes:
-//       - application/x-www-form-urlencoded
-//
+// @Summary Get access token
+// @Tags auth
+// @Param username formData string true "Username"
+// @Param password formData string true "Password"
+// @Accept multipart/form-data
+// @Produce json
+// @Success 200 {object} loginResponseOK
+// TODO: add error responses
+// @Router /v1/auth/access-token [post]
 func Login(c *gin.Context) {
-	// var user models.User
+	var user models.User
 
-	// authErr := func() {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{
-	// 		"error": authErrMsg,
-	// 	})
-	// }
+	authErr := func() {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": authErrMsg,
+		})
+	}
 
-	// if err := c.ShouldBindJSON(&credentails); err != nil {
-	// 	c.JSON(http.StatusUnprocessableEntity, gin.H{
-	// 		"error": err,
-	// 	})
-	// 	return
-	// }
+	username, password := c.PostForm("username"), c.PostForm("password")
 
-	// models.DB.First(&user, "email = ?", credentails.Username)
+	models.DB.First(&user, "email = ?", username)
 
-	// // TODO: find correct method of checking if object was fetched
-	// if user.Email == "" {
-	// 	authErr()
-	// 	return
-	// }
-	// err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentails.Password))
-	// if err != nil {
-	// 	authErr()
-	// 	return
-	// }
+	// TODO: find correct method of checking if object was fetched
+	if user.Email == "" {
+		authErr()
+		return
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		authErr()
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"access_token": "hello",
+	token, err := createToken(user)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(http.StatusOK, loginResponseOK{
+		AccessToken: token,
 	})
+}
+
+var hmacSampleSecret []byte
+
+func createToken(user models.User) (string, error) {
+	hmacSampleSecret = []byte(os.Getenv("JWT_SECRET"))
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub":        user.ID,
+		"token_type": "Bearer",
+	})
+
+	return token.SignedString(hmacSampleSecret)
 }

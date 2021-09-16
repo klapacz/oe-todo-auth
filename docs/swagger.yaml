@@ -1,71 +1,49 @@
-consumes:
-- application/json
+definitions:
+  controllers.loginResponseOK:
+    properties:
+      access_token:
+        type: string
+    type: object
 info:
   contact:
     email: lapacz.kornel@gmail.com
     name: Korneliusz Łapacz
     url: http://klapacz.dev
-  description: Manages authorization.
+  description: Manage authorization
   license:
     name: MIT
     url: http://opensource.org/licenses/MIT
   title: oe-todo auth API
   version: 0.1.0
 paths:
-  /access-token:
+  /v1/auth/access-token:
     post:
       consumes:
-      - application/x-www-form-urlencoded
-      operationId: login
+      - multipart/form-data
       parameters:
-      - example: user@example.com
+      - description: Username
         in: formData
         name: username
         required: true
         type: string
-        x-go-name: Username
-      - in: formData
+      - description: Password
+        in: formData
         name: password
         required: true
         type: string
-        x-go-name: Password
+      produces:
+      - application/json
       responses:
         "200":
-          $ref: '#/responses/loginResponseOK'
-        "401":
-          $ref: '#/responses/GenericError'
-        "422":
-          $ref: '#/responses/GenericError'
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.loginResponseOK'
+      summary: Get access token
       tags:
       - auth
-  /ping:
-    get:
-      operationId: Ping
-produces:
-- application/json
-responses:
-  GenericError:
-    description: ""
-    schema:
-      properties:
-        error:
-          type: string
-          x-go-name: Error
-      type: object
-  loginResponseOK:
-    description: ""
-    schema:
-      properties:
-        accessToken:
-          type: string
-          x-go-name: AccessToken
-      type: object
-schemes:
-- http
-- https
 securityDefinitions:
-  oauth2:
+  OAuth2Password:
     flow: password
-    tokenUrl: /access-token
+    tokenUrl: /v1/auth/access-token
     type: oauth2
 swagger: "2.0"
