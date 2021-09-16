@@ -1,13 +1,11 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 	"github.com/klapacz/oe-todo-auth/models"
+	"github.com/klapacz/oe-todo-auth/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,60 +18,46 @@ type loginResponseOK struct {
 	AccessToken string `json:"access_token"`
 }
 
-const authErrMsg = "Username or password is incorrect"
+var badCredentialsErr = HTTPError{Error: "Bad credentials"}
 
 // @Summary Get access token
 // @Tags auth
+//
+// @Accept multipart/form-data
 // @Param username formData string true "Username"
 // @Param password formData string true "Password"
-// @Accept multipart/form-data
+//
 // @Produce json
 // @Success 200 {object} loginResponseOK
-// TODO: add error responses
+// @Failure 401 {object} HTTPError
+//
 // @Router /v1/auth/access-token [post]
 func Login(c *gin.Context) {
 	var user models.User
 
-	authErr := func() {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": authErrMsg,
-		})
-	}
-
 	username, password := c.PostForm("username"), c.PostForm("password")
 
-	models.DB.First(&user, "email = ?", username)
-
-	// TODO: find correct method of checking if object was fetched
-	if user.Email == "" {
-		authErr()
+	// fetch user
+	if err := models.DB.Where("email = ?", username).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, badCredentialsErr)
 		return
 	}
+
+	// check password
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		authErr()
+		c.JSON(http.StatusUnauthorized, badCredentialsErr)
 		return
 	}
 
-	token, err := createToken(user)
+	// create token
+	token, err := utils.CreateToken(user)
 	if err != nil {
-		log.Fatal(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusOK, loginResponseOK{
 		AccessToken: token,
 	})
-}
-
-var hmacSampleSecret []byte
-
-func createToken(user models.User) (string, error) {
-	hmacSampleSecret = []byte(os.Getenv("JWT_SECRET"))
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":        user.ID,
-		"token_type": "Bearer",
-	})
-
-	return token.SignedString(hmacSampleSecret)
 }

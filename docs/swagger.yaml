@@ -1,4 +1,9 @@
 definitions:
+  controllers.HTTPError:
+    properties:
+      error:
+        type: string
+    type: object
   controllers.loginResponseOK:
     properties:
       access_token:
@@ -38,6 +43,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/controllers.loginResponseOK'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controllers.HTTPError'
       summary: Get access token
       tags:
       - auth

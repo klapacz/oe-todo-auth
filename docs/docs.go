@@ -65,12 +65,26 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.loginResponseOK"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.HTTPError"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
+        "controllers.HTTPError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.loginResponseOK": {
             "type": "object",
             "properties": {
