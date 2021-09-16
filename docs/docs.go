@@ -74,6 +74,30 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/v1/ping": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get access token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.loginResponseOK"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

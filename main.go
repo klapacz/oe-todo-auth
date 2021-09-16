@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/klapacz/oe-todo-auth/controllers"
 	_ "github.com/klapacz/oe-todo-auth/docs"
+	"github.com/klapacz/oe-todo-auth/middlewares"
 	"github.com/klapacz/oe-todo-auth/models"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -30,7 +31,9 @@ func main() {
 
 	v1 := r.Group("/v1")
 	{
-		v1.GET("/ping", controllers.Ping)
+		ping := v1.Group("")
+		ping.Use(middlewares.AuthMiddleware)
+		ping.GET("/ping", controllers.Ping)
 		v1.POST("/auth/access-token", controllers.Login)
 	}
 

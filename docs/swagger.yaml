@@ -50,6 +50,20 @@ paths:
       summary: Get access token
       tags:
       - auth
+  /v1/ping:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.loginResponseOK'
+      security:
+      - OAuth2Password: []
+      summary: Get access token
+      tags:
+      - auth
 securityDefinitions:
   OAuth2Password:
     flow: password
